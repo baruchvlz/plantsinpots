@@ -15,7 +15,7 @@ namespace PlantsInPots
   [BepInDependency(Jotunn.Main.ModGuid)]
   internal class PlantsInPots : BaseUnityPlugin
   {
-    public const string PluginGUID = "com.sveit.PlantsInPots";
+    public const string PluginGUID = "gundmek.PlantsInPots";
     public const string PluginName = "PlantsInPots";
     public const string PluginVersion = "0.0.1";
     private readonly Harmony harmony = new Harmony(PluginGUID);
@@ -35,7 +35,24 @@ namespace PlantsInPots
     private void RegisterPrefabs()
     {
       // get prefab for pot? idk...s
-      AssetBundle bundle = AssetHelper.GetBundle(AssetNames.YellowPlant);
+
+      Jotunn.Logger.LogDebug($" Accessing Bundle Name ==> {AssetConstants.BundleName}");
+      AssetBundle bundle = AssetUtils.GetBundle(AssetConstants.BundleName);
+      /**
+       * GameObject[] assets = bundle.LoadAllAssets<GameObject>();
+
+      foreach (GameObject asset in assets)
+      {
+        Jotunn.Logger.LogMessage($"Load asset => {asset.name}");
+      }
+      **/
+
+      Jotunn.Logger.LogDebug(bundle);
+    }
+
+    private void AddRecipes()
+    {
+
     }
 
 #if DEBUG
