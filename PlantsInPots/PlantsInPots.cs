@@ -1,13 +1,15 @@
 ﻿// PlantsInPots
-// a Valheim mod skeleton using Jötunn
 // 
 // File:    PlantsInPots.cs
 // Project: PlantsInPots
 
 using BepInEx;
 using UnityEngine;
-using HarmonyLib;
 using PlantsInPots.Shared;
+using Jotunn.Entities;
+using Jotunn.Managers;
+using Jotunn.Configs;
+using System.Collections.Generic;
 
 namespace PlantsInPots
 {
@@ -18,42 +20,43 @@ namespace PlantsInPots
     public const string PluginGUID = "gundmek.PlantsInPots";
     public const string PluginName = "PlantsInPots";
     public const string PluginVersion = "0.0.1";
-    private readonly Harmony harmony = new Harmony(PluginGUID);
+
+    private AssetBundle PiPBundle { get; set; }
 
     private void Awake()
     {
-      Jotunn.Logger.LogInfo("PlantsInPots Loaded.");
-      harmony.PatchAll();
-      RegisterPrefabs();
+      LoadBundle();
+      AddPotRecipes();
+      AddPlantPieces();
     }
 
-    private void OnDestroy()
+    private void LoadBundle()
     {
-      harmony.UnpatchAll();
+      PiPBundle = PiPAssetUtils.GetBundleFromResources();
     }
 
-    private void RegisterPrefabs()
+    private void AddPotRecipes()
     {
-      // get prefab for pot? idk...s
-
-      Jotunn.Logger.LogDebug($" Accessing Bundle Name ==> {AssetConstants.BundleName}");
-      AssetBundle bundle = AssetUtils.GetBundle(AssetConstants.BundleName);
-      /**
-       * GameObject[] assets = bundle.LoadAllAssets<GameObject>();
-
-      foreach (GameObject asset in assets)
+      foreach (KeyValuePair<string, ItemConfig> kvp in PiPAssetUtils.PotDictionary)
       {
-        Jotunn.Logger.LogMessage($"Load asset => {asset.name}");
+        GameObject PotPrefab = PiPBundle.LoadAsset<GameObject>(PiPAssetUtils.GetAssetPrefabPath(kvp.Key));
+        CustomItem PotItem = new CustomItem(PotPrefab, fixReference: true, kvp.Value);
+
+        ItemManager.Instance.AddItem(PotItem);
       }
-      **/
-
-      Jotunn.Logger.LogDebug(bundle);
     }
 
-    private void AddRecipes()
+    private void AddPlantPieces()
     {
+      PiPAssetUtils.PlantList.ForEach(plant =>
+      {
+        GameObject PlantPrefab = PiPBundle.LoadAsset<GameObject>(PiPAssetUtils.GetAssetPrefabPath(plant));
+        CustomPiece PlantPiece = new CustomPiece(PlantPrefab, "Hammer", fixReference: true);
 
+        PieceManager.Instance.AddPiece(PlantPiece);
+      });
     }
+
 
 #if DEBUG
     private void Update()
