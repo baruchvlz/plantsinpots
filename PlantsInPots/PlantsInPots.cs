@@ -6,6 +6,7 @@
 using BepInEx;
 using UnityEngine;
 using PlantsInPots.Shared;
+using PlantsInPots.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Configs;
@@ -32,14 +33,14 @@ namespace PlantsInPots
 
     private void LoadBundle()
     {
-      PiPBundle = PiPAssetUtils.GetBundleFromResources();
+      PiPBundle = PiPUtils.GetBundleFromResources();
     }
 
     private void AddPotRecipes()
     {
-      foreach (KeyValuePair<string, ItemConfig> kvp in PiPAssetUtils.PotDictionary)
+      foreach (KeyValuePair<string, ItemConfig> kvp in PotsConfigs.Configs)
       {
-        GameObject PotPrefab = PiPBundle.LoadAsset<GameObject>(PiPAssetUtils.GetAssetPrefabPath(kvp.Key));
+        GameObject PotPrefab = PiPBundle.LoadAsset<GameObject>(PiPUtils.GetAssetPrefabPath(kvp.Key));
         CustomItem PotItem = new CustomItem(PotPrefab, fixReference: true, kvp.Value);
 
         ItemManager.Instance.AddItem(PotItem);
@@ -48,24 +49,18 @@ namespace PlantsInPots
 
     private void AddPlantPieces()
     {
-      PiPAssetUtils.PlantList.ForEach(plant =>
+      foreach (string plant in PlantsConfigs.PlantList)
       {
-        GameObject PlantPrefab = PiPBundle.LoadAsset<GameObject>(PiPAssetUtils.GetAssetPrefabPath(plant));
+        GameObject PlantPrefab = PiPBundle.LoadAsset<GameObject>(PiPUtils.GetAssetPrefabPath(plant));
         CustomPiece PlantPiece = new CustomPiece(PlantPrefab, "Hammer", fixReference: true);
 
         PieceManager.Instance.AddPiece(PlantPiece);
-      });
-    }
-
-
-#if DEBUG
-    private void Update()
-    {
-      if (Input.GetKeyDown(KeyCode.F4))
-      { // Set a breakpoint here to break on F6 key press
-        
       }
     }
-#endif
+
+    private void HandleError()
+    {
+
+    }
   }
 }

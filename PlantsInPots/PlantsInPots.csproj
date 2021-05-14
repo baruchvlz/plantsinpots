@@ -62,6 +62,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configs\PlantConfigs.cs" />
+    <Compile Include="Configs\PotsConfigs.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="PlantsInPots.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
